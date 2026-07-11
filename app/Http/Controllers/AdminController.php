@@ -1,15 +1,13 @@
 public function index(Request $request)
 {
-    // 🔍 Step 2 – hanya satu dd() aktif
     $query = Laporan::query();
-    dd('Step 2: Query dibuat');
 
     // Filter status
     if ($request->filled('status')) {
         $query->where('status', $request->status);
     }
 
-    // Pencarian deskripsi
+    // Pencarian deskripsi (case-insensitive untuk PostgreSQL)
     if ($request->filled('search')) {
         $query->where('deskripsi', 'ILIKE', '%' . $request->search . '%');
     }
@@ -24,10 +22,10 @@ public function index(Request $request)
         $query->whereDate('created_at', '<=', $request->tanggal_akhir);
     }
 
-    // DATA UNTUK TABEL
+    // DATA UNTUK TABEL (pagination)
     $laporans = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
 
-    // DATA UNTUK PETA
+    // DATA UNTUK PETA (semua data)
     $mapQuery = clone $query;
     $mapLaporans = $mapQuery->orderBy('created_at', 'desc')->get();
 
@@ -37,7 +35,7 @@ public function index(Request $request)
     $diproses = Laporan::where('status', 'Diproses')->count();
     $selesai  = Laporan::where('status', 'Selesai')->count();
 
-    // GRAFIK PER BULAN
+    // GRAFIK PER BULAN (PostgreSQL)
     $bulanan = Laporan::selectRaw("EXTRACT(MONTH FROM created_at) as bulan, COUNT(*) as total")
                       ->groupByRaw("EXTRACT(MONTH FROM created_at)")
                       ->pluck('total', 'bulan')
@@ -48,6 +46,7 @@ public function index(Request $request)
         $chartData[$i] = $bulanan[$i] ?? 0;
     }
 
+    // KEMBALIKAN VIEW
     return view('admin.dashboard', compact(
         'laporans',
         'mapLaporans',
