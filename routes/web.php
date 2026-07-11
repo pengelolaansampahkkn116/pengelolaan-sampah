@@ -14,12 +14,10 @@ Route::get('/', function () {
 
 Route::post('/laporan', [LaporanController::class, 'store'])->name('laporan.store');
 
-// Auth
 Route::get('/login', [AuthController::class, 'loginForm'])->name('login.form');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// ADMIN ROUTES – TANPA MIDDLEWARE
 Route::get('/admin', function (Request $request) {
     if (!session('admin_login')) {
         return redirect()->route('login.form');
