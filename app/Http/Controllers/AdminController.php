@@ -20,9 +20,9 @@ class AdminController extends Controller
             $query->where('status', $request->status);
         }
 
-        // Pencarian deskripsi (case-insensitive untuk PostgreSQL)
+        // Pencarian deskripsi (case-insensitive untuk SQLite/PostgreSQL)
         if ($request->filled('search')) {
-            $query->where('deskripsi', 'ILIKE', '%' . $request->search . '%');
+            $query->where('deskripsi', 'LIKE', '%' . $request->search . '%');
         }
 
         // Filter tanggal awal
@@ -48,15 +48,16 @@ class AdminController extends Controller
         $diproses = Laporan::where('status', 'Diproses')->count();
         $selesai  = Laporan::where('status', 'Selesai')->count();
 
-        // GRAFIK PER BULAN (PostgreSQL)
-        $bulanan = Laporan::selectRaw("EXTRACT(MONTH FROM created_at) as bulan, COUNT(*) as total")
-                          ->groupByRaw("EXTRACT(MONTH FROM created_at)")
+        // GRAFIK PER BULAN (SQLite compatible)
+        $bulanan = Laporan::selectRaw("strftime('%m', created_at) as bulan, COUNT(*) as total")
+                          ->groupBy('bulan')
                           ->pluck('total', 'bulan')
                           ->toArray();
 
         $chartData = [];
         for ($i = 1; $i <= 12; $i++) {
-            $chartData[$i] = $bulanan[$i] ?? 0;
+            $bulanKey = str_pad($i, 2, '0', STR_PAD_LEFT); // '01'..'12'
+            $chartData[$i] = $bulanan[$bulanKey] ?? 0;
         }
 
         return view('admin.dashboard', compact(
@@ -80,10 +81,7 @@ class AdminController extends Controller
         ]);
 
         $laporan = Laporan::findOrFail($id);
-
-        $laporan->update([
-            'status' => $request->status
-        ]);
+        $laporan->update(['status' => $request->status]);
 
         return redirect()->back()->with('success', 'Status laporan berhasil diubah.');
     }
