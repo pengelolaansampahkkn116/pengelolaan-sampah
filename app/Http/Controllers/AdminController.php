@@ -9,10 +9,17 @@ use Illuminate\Support\Facades\File;
 class AdminController extends Controller
 {
     /**
-     * Dashboard Admin dengan filter, pencarian, pagination, dan grafik
+     * Dashboard Admin – SEMENTARA untuk debugging
      */
     public function index(Request $request)
     {
+        // 🔍 Debug: Cek apakah method ini dipanggil
+        dd('masuk index');
+
+        // ==========================================
+        // KODE ASLI DI BAWAH INI (DI-NONAKTIFKAN)
+        // ==========================================
+        /*
         $query = Laporan::query();
 
         // Filter status
@@ -68,6 +75,7 @@ class AdminController extends Controller
             'selesai',
             'chartData'
         ));
+        */
     }
 
     /**
