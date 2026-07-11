@@ -3,19 +3,21 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\URL; // ← Tambahkan ini
 
 class AppServiceProvider extends ServiceProvider
 {
-    public function boot(): void
+    /**
+     * Register any application services.
+     */
+    public function register(): void
     {
-        // Force HTTPS di semua URL
-        if ($this->app->environment('production')) {
-            URL::forceScheme('https');
-        }
+        //
     }
 
-    public function register(): void
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
     {
         //
     }
