@@ -71,7 +71,8 @@
                 <label class="form-label fw-semibold">Upload Foto Sampah</label>
                 <input type="file" id="foto" name="foto" class="form-control" accept="image/*" capture="environment" required>
                 <img id="preview" class="img-fluid rounded mt-3 shadow-sm" style="display:none; max-width:320px;">
-                <small class="text-muted">Maksimal 2 MB</small>
+                <!-- ✅ PERUBAHAN: 15 MB -->
+                <small class="text-muted">Maksimal 15 MB</small>
             </div>
 
             <!-- DESKRIPSI -->
@@ -129,17 +130,20 @@
         let gpsMarker = null; // marker untuk lokasi pengguna
 
         // ==========================
-        // 4. Preview Foto + Validasi Ukuran
+        // 4. Preview Foto + Validasi Ukuran (15 MB)
         // ==========================
         const foto = document.getElementById("foto");
         const preview = document.getElementById("preview");
 
+        // ✅ Batas 15 MB dalam byte
+        const batasMaksimal = 15 * 1024 * 1024; // 15.728.640 bytes
+
         foto.addEventListener("change", function(e) {
             const file = e.target.files[0];
             if (file) {
-                // Validasi ukuran (maks 2 MB = 2.097.152 bytes)
-                if (file.size > 2097152) {
-                    alert("Ukuran foto maksimal 2 MB. Silakan pilih file yang lebih kecil.");
+                // Validasi ukuran (maks 15 MB)
+                if (file.size > batasMaksimal) {
+                    alert("Ukuran foto maksimal 15 MB. Silakan pilih file yang lebih kecil.");
                     foto.value = "";
                     preview.style.display = "none";
                     preview.src = "";

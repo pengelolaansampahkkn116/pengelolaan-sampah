@@ -9,9 +9,9 @@ class LaporanController extends Controller
 {
     public function store(Request $request)
     {
-        // Validasi input
+        // Validasi input – maksimal 15 MB (15 * 1024 = 15360 KB)
         $request->validate([
-            'foto'       => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'foto'       => 'required|image|mimes:jpg,jpeg,png|max:15360',
             'deskripsi'  => 'required|string',
             'latitude'   => 'required',
             'longitude'  => 'required',
