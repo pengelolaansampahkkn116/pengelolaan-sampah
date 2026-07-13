@@ -157,7 +157,6 @@
                 <tbody>
                     @forelse($laporans as $laporan)
                     <tr>
-                        {{-- Nomor urut dengan pagination --}}
                         <td>{{ ($laporans->currentPage() - 1) * $laporans->perPage() + $loop->iteration }}</td>
                         <td width="120">
                             <img src="{{ asset('uploads/'.$laporan->foto) }}"
@@ -178,14 +177,14 @@
                         </td>
                         <td>{{ $laporan->created_at->format('d M Y H:i') }}</td>
                         <td>
-                            <a href="https://maps.google.com/?q={{ $laporan->latitude }},{{ $laporan->longitude }}"
+                            {{-- LINK GOOGLE MAPS MODE RUTE --}}
+                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ $laporan->latitude }},{{ $laporan->longitude }}"
                                target="_blank"
                                class="btn btn-primary btn-sm">
                                 <i class="bi bi-geo-alt"></i>
                             </a>
                         </td>
                         <td>
-                            {{-- Dropdown Ubah Status --}}
                             <form action="{{ route('admin.status', $laporan->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('PUT')
@@ -195,8 +194,6 @@
                                     <option value="Selesai" {{ $laporan->status=='Selesai' ? 'selected' : '' }}>Selesai</option>
                                 </select>
                             </form>
-
-                            {{-- Tombol Hapus --}}
                             <form action="{{ route('admin.destroy', $laporan->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus laporan ini?')">
                                 @csrf
                                 @method('DELETE')
@@ -214,7 +211,6 @@
                 </tbody>
             </table>
         </div>
-        {{-- Pagination --}}
         <div class="card-footer">
             {{ $laporans->links() }}
         </div>
@@ -226,9 +222,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // ==========================================
-        // 1. Grafik Status (Pie)
-        // ==========================================
+        // Grafik Status (Pie)
         const ctxStatus = document.getElementById('statusChart').getContext('2d');
         new Chart(ctxStatus, {
             type: 'pie',
@@ -246,9 +240,7 @@
             }
         });
 
-        // ==========================================
-        // 2. Grafik per Bulan (Bar)
-        // ==========================================
+        // Grafik per Bulan (Bar)
         const ctxMonthly = document.getElementById('monthlyChart').getContext('2d');
         const bulanLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
         const dataBulan = @json(array_values($chartData));
@@ -270,18 +262,14 @@
             }
         });
 
-        // ==========================================
-        // 3. Peta (menampilkan SEMUA data dari mapLaporans)
-        // ==========================================
+        // Peta (menampilkan SEMUA data dari mapLaporans)
         if (typeof map !== 'undefined') {
-            // Hapus marker lama (dari layout)
             map.eachLayer(function(layer) {
                 if (layer instanceof L.Marker) {
                     map.removeLayer(layer);
                 }
             });
 
-            // Gunakan mapLaporans (SEMUA data, tanpa pagination)
             @foreach($mapLaporans as $laporan)
                 var color = 'red';
                 @if($laporan->status == 'Diproses')
@@ -313,16 +301,16 @@
                             <b>Deskripsi:</b><br>
                             ${deskripsi}
                             <br><br>
-                            <a href="https://maps.google.com/?q=${lat},${lng}"
+                            {{-- LINK POPUP GOOGLE MAPS MODE RUTE --}}
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}"
                                target="_blank"
                                class="btn btn-success btn-sm w-100">
-                               Google Maps
+                               Buka Rute
                             </a>
                         </div>
                     `);
             @endforeach
 
-            // Zoom otomatis berdasarkan semua data
             @if($mapLaporans->count())
                 var bounds = L.latLngBounds([
                     @foreach($mapLaporans as $l)

@@ -146,10 +146,10 @@
                                 {{ optional($laporan->created_at)->format('d-m-Y H:i') }}
                             </p>
                             <a
-                                href="https://www.google.com/maps?q={{ $laporan->latitude }},{{ $laporan->longitude }}"
+                                href="https://www.google.com/maps/dir/?api=1&destination={{ $laporan->latitude }},{{ $laporan->longitude }}"
                                 target="_blank"
                                 class="btn btn-success btn-sm w-100">
-                                Buka di Google Maps
+                                Buka Rute di Google Maps
                             </a>
                         </div>
                     `);
